@@ -1,36 +1,63 @@
-import { useQuery } from "@apollo/client";
-import { ActivityIndicator, FlatList, Text } from "react-native";
-import { View } from "../../Themed";
-import { styles } from "@/app/(tabs)/styles";
-import { GET_DOG_QUERY } from "./graphql";
-import { usePathname } from "expo-router";
+import { useQuery } from '@apollo/client/react';
+import { Text } from 'react-native';
+import { Card, StateBlock } from '@/components/ui';
+import { useAppTheme } from '@/theme';
+import { GET_DOG_QUERY } from './graphql';
 
 export interface DogDescriptionProps {
   dogId: string;
 }
 
 export function DogDescription({ dogId }: DogDescriptionProps) {
+  const theme = useAppTheme();
   const { loading, error, data } = useQuery(GET_DOG_QUERY, {
-    variables:
-      { id: dogId }
+    variables: { id: dogId },
   });
-  const pathname = usePathname();
-  console.log(pathname);
 
-  const { separator } = styles;
+  if (loading) {
+    return <StateBlock kind="loading" message="Carregando detalhes..." />;
+  }
 
-  if (error) return <Text>{`Error to list: ${error.message}`}</Text>;
+  if (error) {
+    return <StateBlock kind="error" message="Não foi possível carregar os detalhes." />;
+  }
+
+  if (!data?.dog) {
+    return <StateBlock kind="empty" message="Cão não encontrado." />;
+  }
 
   return (
-    <View>
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      {data && data.dog && (
-        <View style={separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)">
-          <Text>{data.dog.id}</Text>
-          <Text>{data.dog.name}</Text>
-          <Text>{data.dog.breed}</Text>
-        </View>
-      )}
-    </View>
+    <Card>
+      <Text
+        style={{
+          color: theme.colors.text,
+          fontFamily: theme.typography.fontFamily,
+          fontSize: theme.typography.body,
+          fontWeight: '600',
+        }}
+      >
+        {data.dog.name}
+      </Text>
+      <Text
+        style={{
+          color: theme.colors.textMuted,
+          fontSize: theme.typography.body,
+          lineHeight: theme.typography.bodyLineHeight,
+          marginTop: theme.spacing.xs,
+        }}
+      >
+        {data.dog.breed}
+      </Text>
+      <Text
+        style={{
+          color: theme.colors.textMuted,
+          fontFamily: theme.typography.fontFamily,
+          fontSize: theme.typography.label,
+          marginTop: theme.spacing.sm,
+        }}
+      >
+        {data.dog.id}
+      </Text>
+    </Card>
   );
 }

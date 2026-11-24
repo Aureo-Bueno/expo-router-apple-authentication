@@ -1,33 +1,65 @@
-import { useQuery } from "@apollo/client";
-import { GET_DOGS_QUERY } from "./graphql";
-import { styles } from "@/app/(tabs)/styles";
-import { Text, View } from "../Themed";
-import { ActivityIndicator, Button, FlatList, TouchableOpacity } from "react-native";
-import { useNavigation } from "expo-router";
+import { useQuery } from '@apollo/client/react';
+import { FlatList, Text, View } from 'react-native';
+import { ActionButton, Card, StateBlock, uiStyles } from '@/components/ui';
+import { useAppTheme } from '@/theme';
+import { GET_DOGS_QUERY } from './graphql';
 
 export function DogsList() {
-  const { loading, error, data } = useQuery(GET_DOGS_QUERY);
-  const { navigate }  = useNavigation();
+  const theme = useAppTheme();
+  const { loading, error, data, refetch } = useQuery(GET_DOGS_QUERY);
 
-  const { separator, container } = styles;
+  if (loading) {
+    return <StateBlock kind="loading" message="Carregando cães..." />;
+  }
 
-  // if (error) return <Text>{`Error to list: ${error.message}`}</Text>;
-  console.log(data);
+  if (error) {
+    return <StateBlock kind="error" message="Não foi possível carregar os cães." />;
+  }
+
+  if (!data?.dogs?.length) {
+    return <StateBlock kind="empty" message="Nenhum cão encontrado." />;
+  }
 
   return (
-    <View style={container}>
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      <Button title="Reload" onPress={() => navigate('DogsDescription')} />
+    <View style={uiStyles.list}>
+      <ActionButton label="Recarregar" onPress={() => void refetch()} variant="secondary" />
+
       <FlatList
-        data={data?.dogs}
+        data={data.dogs}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={separator}>
-            <TouchableOpacity onPress={() => navigate}>
-              <Text>{item.id}</Text>
-              <Text>{item.name}</Text>
-              <Text>{item.breed}</Text>
-            </TouchableOpacity>
-          </View>
+          <Card style={{ marginBottom: theme.spacing.md }}>
+            <Text
+              style={{
+                color: theme.colors.text,
+                fontFamily: theme.typography.fontFamily,
+                fontSize: theme.typography.body,
+                fontWeight: '600',
+              }}
+            >
+              {item.name}
+            </Text>
+            <Text
+              style={{
+                color: theme.colors.textMuted,
+                fontSize: theme.typography.body,
+                lineHeight: theme.typography.bodyLineHeight,
+                marginTop: theme.spacing.xs,
+              }}
+            >
+              {item.breed}
+            </Text>
+            <Text
+              style={{
+                color: theme.colors.textMuted,
+                fontFamily: theme.typography.fontFamily,
+                fontSize: theme.typography.label,
+                marginTop: theme.spacing.sm,
+              }}
+            >
+              {item.id}
+            </Text>
+          </Card>
         )}
       />
     </View>

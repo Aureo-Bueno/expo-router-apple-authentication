@@ -1,15 +1,17 @@
-import { Text, View } from '@/components/Themed';
-import { styles } from './styles';
 import { LocationsList } from '@/components/LocationsList';
+import { Card, Screen, ScreenHeader } from '@/components/ui';
 
 export default function TabLocationsScreen() {
-  const { container, separator, title } = styles;
-
   return (
-    <View style={container}>
-      <Text style={title}>List Locations</Text>
-      <View style={separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <LocationsList />
-    </View>
+    <Screen scroll={false}>
+      <Card>
+        <ScreenHeader
+          eyebrow="GRAPHQL"
+          title="Localizações"
+          description="Locais carregados pela API GraphQL, com descrição e imagem em cards themeados."
+        />
+        <LocationsList />
+      </Card>
+    </Screen>
   );
 }

@@ -1,20 +1,18 @@
+import { ApolloProvider } from '@apollo/client/react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-
-import { useColorScheme } from '@/components/useColorScheme';
-import { ApolloProvider } from '@apollo/client';
+import { AuthProvider } from '@/hooks';
 import { client } from '@/services/client';
+import { getNavigationTheme, useAppTheme } from '@/theme';
 
-export {
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  anchor: '(tabs)',
 };
 
 SplashScreen.preventAutoHideAsync();
@@ -43,16 +41,18 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const theme = useAppTheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <ApolloProvider client={client}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
-      </ApolloProvider>
+    <ThemeProvider value={getNavigationTheme(theme)}>
+      <AuthProvider>
+        <ApolloProvider client={client}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          </Stack>
+        </ApolloProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

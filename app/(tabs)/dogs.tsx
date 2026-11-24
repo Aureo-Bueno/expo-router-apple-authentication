@@ -1,16 +1,17 @@
-import { Text, View } from '@/components/Themed';
-import { styles } from './styles';
-import { DogDescription } from '@/components/DogsList/DogDescription';
 import { DogsList } from '@/components/DogsList';
+import { Card, Screen, ScreenHeader } from '@/components/ui';
 
-export default function TabLocationsScreen() {
-  const { container, separator, title } = styles;
-
+export default function TabDogsScreen() {
   return (
-    <View style={container}>
-      <Text style={title}>List Dogs Types</Text>
-      <View style={separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <DogsList />
-    </View>
+    <Screen scroll={false}>
+      <Card>
+        <ScreenHeader
+          eyebrow="GRAPHQL"
+          title="Raças de cães"
+          description="Dados de cães carregados pela API GraphQL com estados de carregamento, erro e recarga."
+        />
+        <DogsList />
+      </Card>
+    </Screen>
   );
 }

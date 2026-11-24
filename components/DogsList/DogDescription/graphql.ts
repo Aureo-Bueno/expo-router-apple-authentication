@@ -1,7 +1,7 @@
-import { TypedDocumentNode, gql } from '@apollo/client';
-import { Data, Variables } from './types';
+import { gql, type TypedDocumentNode } from '@apollo/client';
+import type { DogDescriptionData, DogDescriptionVariables } from '@/types';
 
-export const GET_DOG_QUERY: TypedDocumentNode<Data, Variables> = gql`
+export const GET_DOG_QUERY: TypedDocumentNode<DogDescriptionData, DogDescriptionVariables> = gql`
   query GetDog($id: String) {
     dog(id: $id) {
       id

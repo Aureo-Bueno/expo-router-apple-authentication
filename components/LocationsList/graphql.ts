@@ -1,6 +1,11 @@
-import { gql } from '@apollo/client';
+import { gql, type TypedDocumentNode } from '@apollo/client';
+import type { ILocations } from '@/types';
 
-export const GET_LOCATIONS = gql`
+type LocationsData = {
+  locations: ILocations[];
+};
+
+export const GET_LOCATIONS: TypedDocumentNode<LocationsData, Record<string, never>> = gql`
   query GetLocations {
     locations {
       id
